@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản lý Nạp Robux</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .transaction-list {
+            margin-bottom: 30px;
+        }
+
+        .transaction-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transaction-list table, .transaction-list th, .transaction-list td {
+            border: 1px solid #ddd;
+        }
+
+        .transaction-list th, .transaction-list td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .status-pending {
+            color: orange;
+        }
+
+        .status-approved {
+            color: green;
+        }
+
+        .status-rejected {
+            color: red;
+        }
+
+        .button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .button.reject {
+            background-color: #FF5733;
+        }
+
+        .button.approve {
+            background-color: #28A745;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quản lý Nạp Robux</h1>
+
+        <!-- Transaction List -->
+        <div class="transaction-list">
+            <h2>Danh sách yêu cầu nạp Robux</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Giao Dịch</th>
+                        <th>Loại Thẻ</th>
+                        <th>Mệnh Giá</th>
+                        <th>Mã Thẻ</th>
+                        <th>Seri Thẻ</th>
+                        <th>Số Robux</th>
+                        <th>Bonus</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody id="transaction-table-body">
+                    <!-- Dữ liệu sẽ được chèn vào đây từ JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Load danh sách yêu cầu từ localStorage (hoặc từ cơ sở dữ liệu thực tế)
+        function loadTransactionList() {
+            const transactionList = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+            const tableBody = document.getElementById('transaction-table-body');
+            tableBody.innerHTML = '';  // Clear previous entries
+
+            transactionList.forEach((transaction, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${transaction.cardType}</td>
+                    <td>${transaction.cardAmount} VND</td>
+                    <td>${transaction.cardCode}</td>
+                    <td>${transaction.serialCode}</td>
+                    <td>${transaction.robuxAmount}</td>
+                    <td>${transaction.bonus}</td>
+                    <td class="status-${transaction.status.toLowerCase()}">${transaction.status}</td>
+                    <td>
+                        <button class="button approve" onclick="approveTransaction(${index})">Duyệt</button>
+                        <button class="button reject" onclick="rejectTransaction(${index})">Từ Chối</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Duyệt giao dịch (thay đổi trạng thái)
+        function approveTransaction(index) {
+            const transactionList = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+            transactionList[index].status = 'Đã duyệt nạp Robux';
+            localStorage.setItem('paymentHistory', JSON.stringify(transactionList));
+            loadTransactionList();  // Reload the list after approval
+        }
+
+        // Từ chối giao dịch (thay đổi trạng thái)
+        function rejectTransaction(index) {
+            const transactionList = JSON.parse(localStorage.getItem('paymentHistory')) || [];
+            transactionList[index].status = 'Từ chối';
+            localStorage.setItem('paymentHistory', JSON.stringify(transactionList));
+            loadTransactionList();  // Reload the list after rejection
+        }
+
+        // Initial load
+        loadTransactionList();
+    </script>
+
+</body>
+</html>
