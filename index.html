@@ -35,7 +35,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .payment-section, .history-section {
+        .payment-section, .history-section, .withdraw-section {
             margin-bottom: 30px;
         }
 
@@ -76,7 +76,7 @@
     <button id="theme-toggle">Toggle Dark Mode</button>
 
     <div class="container">
-        <!-- Payment Form -->
+        <!-- Nạp Robux -->
         <div class="payment-section">
             <h2>Nạp Robux bằng Thẻ Điện Thoại</h2>
             <form id="payment-form" class="payment-form">
@@ -106,10 +106,37 @@
             </div>
         </div>
 
-        <!-- Transaction History -->
+        <!-- Lịch sử giao dịch -->
         <div class="history-section">
             <h2>Lịch Sử Nạp Robux</h2>
             <ul id="history-list"></ul>
+        </div>
+
+        <!-- Rút Robux -->
+        <div class="withdraw-section">
+            <h2>Rút Robux</h2>
+            <form id="withdraw-form">
+                <div class="form-group">
+                    <label for="withdraw-method">Hình Thức Rút</label>
+                    <select id="withdraw-method">
+                        <option value="GAMEPASS">Game Pass</option>
+                        <option value="ROBLOX_ITEM">Vật Phẩm Roblox</option>
+                        <option value="CASH">Tiền Mặt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="robux-input">Số Robux *</label>
+                    <input type="number" placeholder="0" required id="robux-input">
+                </div>
+                <div class="form-group">
+                    <label for="username-input">Tên đăng nhập</label>
+                    <input type="text" placeholder="Nhập Tên đăng nhập" required id="username-input">
+                </div>
+                <button type="submit" class="btn">RÚT NGAY</button>
+            </form>
+            <div id="withdraw-result">
+                <p id="withdraw-status"></p>
+            </div>
         </div>
     </div>
 
@@ -204,6 +231,34 @@
 
             // Reset the form
             paymentForm.reset();
+        });
+
+        // Handle withdraw form submission
+        const withdrawForm = document.getElementById('withdraw-form');
+        const withdrawMethodInput = document.getElementById('withdraw-method');
+        const robuxInput = document.getElementById('robux-input');
+        const usernameInput = document.getElementById('username-input');
+        const withdrawResult = document.getElementById('withdraw-result');
+
+        withdrawForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const withdrawMethod = withdrawMethodInput.value;
+            const robuxAmount = parseInt(robuxInput.value);
+            const username = usernameInput.value;
+
+            // Check if Robux is valid and sufficient
+            if (isNaN(robuxAmount) || robuxAmount <= 0) {
+                alert('Số Robux không hợp lệ.');
+                return;
+            }
+
+            // Simulate withdraw processing
+            withdrawResult.innerHTML = `Rút ${robuxAmount} Robux thành công cho tài khoản ${username} với hình thức ${withdrawMethod}.`;
+
+            // Reset input fields
+            robuxInput.value = '';
+            usernameInput.value = '';
         });
     </script>
 
