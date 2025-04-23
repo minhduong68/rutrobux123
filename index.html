@@ -35,7 +35,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .payment-section, .history-section, .withdraw-section {
+        .payment-section, .history-section {
             margin-bottom: 30px;
         }
 
@@ -69,6 +69,12 @@
             color: orange;
         }
 
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -76,7 +82,7 @@
     <button id="theme-toggle">Toggle Dark Mode</button>
 
     <div class="container">
-        <!-- Nạp Robux -->
+        <!-- Payment Form -->
         <div class="payment-section">
             <h2>Nạp Robux bằng Thẻ Điện Thoại</h2>
             <form id="payment-form" class="payment-form">
@@ -97,6 +103,21 @@
                 <input type="text" id="card-code" placeholder="Nhập mã thẻ" required>
                 <input type="text" id="serial-code" placeholder="Nhập mã seri" required>
 
+                <div>
+                    <select id="user-type" required>
+                        <option value="username">Tên đăng nhập</option>
+                        <option value="gamepass">Gamepass</option>
+                    </select>
+                </div>
+
+                <div>
+                    <input type="text" id="user-input" placeholder="Nhập tên đăng nhập hoặc game pass" required>
+                </div>
+
+                <div id="robux-amount-container">
+                    <p id="calculated-robux">Số Robux nhận được: 0</p>
+                </div>
+
                 <button type="submit">Nạp Robux</button>
             </form>
             <div id="result">
@@ -104,39 +125,13 @@
                 <p id="bonus-robux">Bonus: 0</p>
                 <p id="processing-status" class="processing" style="display: none;">Robux đang xử lý...</p>
             </div>
+            <p id="error-message" class="error-message">Mã thẻ hoặc mã seri không hợp lệ! Nếu cố tình sai, bạn sẽ mất thẻ.</p>
         </div>
 
-        <!-- Lịch sử giao dịch -->
+        <!-- Transaction History -->
         <div class="history-section">
             <h2>Lịch Sử Nạp Robux</h2>
             <ul id="history-list"></ul>
-        </div>
-
-        <!-- Rút Robux -->
-        <div class="withdraw-section">
-            <h2>Rút Robux</h2>
-            <form id="withdraw-form">
-                <div class="form-group">
-                    <label for="withdraw-method">Hình Thức Rút</label>
-                    <select id="withdraw-method">
-                        <option value="GAMEPASS">Game Pass</option>
-                        <option value="ROBLOX_ITEM">Vật Phẩm Roblox</option>
-                        <option value="CASH">Tiền Mặt</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="robux-input">Số Robux *</label>
-                    <input type="number" placeholder="0" required id="robux-input">
-                </div>
-                <div class="form-group">
-                    <label for="username-input">Tên đăng nhập</label>
-                    <input type="text" placeholder="Nhập Tên đăng nhập" required id="username-input">
-                </div>
-                <button type="submit" class="btn">RÚT NGAY</button>
-            </form>
-            <div id="withdraw-result">
-                <p id="withdraw-status"></p>
-            </div>
         </div>
     </div>
 
@@ -168,8 +163,10 @@
         const cardTypeInput = document.getElementById('card-type');
         const cardCodeInput = document.getElementById('card-code');
         const serialCodeInput = document.getElementById('serial-code');
+        const userTypeInput = document.getElementById('user-type');
+        const userInput = document.getElementById('user-input');
         const calculatedRobux = document.getElementById('calculated-robux');
-        const bonusRobux = document.getElementById('bonus-robux');
+        const errorMessage = document.getElementById('error-message');
         const processingStatus = document.getElementById('processing-status');
 
         paymentForm.addEventListener('submit', function (e) {
@@ -179,6 +176,14 @@
             const cardType = cardTypeInput.value;
             const cardCode = cardCodeInput.value;
             const serialCode = serialCodeInput.value;
+            const userType = userTypeInput.value;
+            const userValue = userInput.value;
+
+            // Validate card code and serial code
+            if (!/^\d+$/.test(cardCode) || !/^\d+$/.test(serialCode)) {
+                errorMessage.style.display = 'block';
+                return;
+            }
 
             let robuxAmount = 0;
             let bonus = 0;
@@ -202,7 +207,6 @@
 
             // Update the UI with calculated results
             calculatedRobux.textContent = `Số Robux nhận được: ${robuxAmount}`;
-            bonusRobux.textContent = `Bonus: ${bonus}`;
 
             // Show processing message
             processingStatus.style.display = 'block';
@@ -231,34 +235,6 @@
 
             // Reset the form
             paymentForm.reset();
-        });
-
-        // Handle withdraw form submission
-        const withdrawForm = document.getElementById('withdraw-form');
-        const withdrawMethodInput = document.getElementById('withdraw-method');
-        const robuxInput = document.getElementById('robux-input');
-        const usernameInput = document.getElementById('username-input');
-        const withdrawResult = document.getElementById('withdraw-result');
-
-        withdrawForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const withdrawMethod = withdrawMethodInput.value;
-            const robuxAmount = parseInt(robuxInput.value);
-            const username = usernameInput.value;
-
-            // Check if Robux is valid and sufficient
-            if (isNaN(robuxAmount) || robuxAmount <= 0) {
-                alert('Số Robux không hợp lệ.');
-                return;
-            }
-
-            // Simulate withdraw processing
-            withdrawResult.innerHTML = `Rút ${robuxAmount} Robux thành công cho tài khoản ${username} với hình thức ${withdrawMethod}.`;
-
-            // Reset input fields
-            robuxInput.value = '';
-            usernameInput.value = '';
         });
     </script>
 
