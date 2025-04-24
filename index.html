@@ -3,240 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Xổ Số Siêu Tốc</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Rút Vật Phẩm (Game)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        /* Các style mặc định cho light theme */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            flex-direction: column;
             background-color: #f4f4f4;
             color: #333;
         }
-
-        #theme-toggle {
+        .sidebar {
             position: fixed;
-            top: 10px;
-            right: 10px;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .sidebar .account-info, .sidebar .notification, .sidebar .robux-free {
+            width: 100%;
+            background-color: #444;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #666;
+            box-sizing: border-box;
+        }
+        .sidebar .robux-free a {
+            color: red;
+            font-weight: bold;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            margin-left: 320px;
+            box-sizing: border-box;
+        }
+        .tab {
+            display: flex;
+            align-items: center;
+        }
+        .tab img {
+            width: 50px; /* Giảm kích thước logo */
+            margin-right: 10px;
+        }
+        .tab button {
+            flex: 1;
             padding: 10px;
-            background-color: #007BFF;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .active {
+            background-color: red;
+            color: white;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: red;
             color: white;
             border: none;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
         }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .payment-section, .history-section {
-            margin-bottom: 30px;
-        }
-
-        .payment-form input, .payment-form select, .payment-form button {
+        iframe {
             width: 100%;
+            height: 200px;
+            margin-top: 15px;
+        }
+        .message {
             padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .payment-form button {
-            background-color: #007BFF;
+            margin-top: 15px;
+            background-color: #4CAF50;
             color: white;
-            cursor: pointer;
+            border-radius: 5px;
+            display: none;
         }
-
-        .history-section ul {
+        .history {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .history h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .history ul {
             list-style-type: none;
             padding: 0;
         }
-
-        .history-section li {
-            background-color: #f8f9fa;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
+        .history li {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
         }
-
-        .processing {
-            color: orange;
-        }
-
-        .error-message {
+        .footer-note {
+            width: 100%;
+            background-color: #fff;
             color: red;
-            font-size: 12px;
-            display: none;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-sizing: border-box;
+            font-size: 16px;
+            border: 2px solid red;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* Dark theme */
+        body.dark {
+            background-color: #333;
+            color: #fff;
+        }
+        .sidebar.dark {
+            background-color: #222;
+        }
+        .sidebar .account-info.dark, .sidebar .notification.dark, .sidebar .robux-free.dark {
+            background-color: #444;
+        }
+        .container.dark {
+            background-color: #444;
+            color: #fff;
+        }
+        .footer-note.dark {
+            background-color: #222;
+            color: red;
+        }
     </style>
 </head>
 <body>
-
-    <button id="theme-toggle">Toggle Dark Mode</button>
-
-    <div class="container">
-        <!-- Payment Form -->
-        <div class="payment-section">
-            <h2>Nạp Robux bằng Thẻ Điện Thoại</h2>
-            <form id="payment-form" class="payment-form">
-                <select id="card-type" required>
-                    <option value="Viettel">Viettel</option>
-                    <option value="Mobifone">Mobifone</option>
-                    <option value="Vinaphone">Vinaphone</option>
-                </select>
-
-                <select id="card-amount" required>
-                    <option value="20000">20,000 VND</option>
-                    <option value="50000">50,000 VND</option>
-                    <option value="100000">100,000 VND</option>
-                    <option value="200000">200,000 VND</option>
-                    <option value="500000">500,000 VND</option>
-                </select>
-
-                <input type="text" id="card-code" placeholder="Nhập mã thẻ" required>
-                <input type="text" id="serial-code" placeholder="Nhập mã seri" required>
-
-                <div>
-                    <select id="user-type" required>
-                        <option value="username">Tên đăng nhập</option>
-                        <option value="gamepass">Gamepass</option>
-                    </select>
-                </div>
-
-                <div>
-                    <input type="text" id="user-input" placeholder="Nhập tên đăng nhập hoặc game pass" required>
-                </div>
-
-                <div id="robux-amount-container">
-                    <p id="calculated-robux">Số Robux nhận được: 0</p>
-                </div>
-
-                <button type="submit">Nạp Robux</button>
-            </form>
-            <div id="result">
-                <p id="calculated-robux">Số Robux nhận được: 0</p>
-                <p id="bonus-robux">Bonus: 0</p>
-                <p id="processing-status" class="processing" style="display: none;">Robux đang xử lý...</p>
+    <!-- Thanh bên trái -->
+    <div class="sidebar">
+        <h2>Thông Tin Tài Khoản</h2>
+        <div class="account-info">
+            <div class="info-item">
+                <strong>Tên tài khoản:</strong>
+                <p>JohnDoe</p>
             </div>
-            <p id="error-message" class="error-message">Mã thẻ hoặc mã seri không hợp lệ! Nếu cố tình sai, bạn sẽ mất thẻ.</p>
+            <div class="info-item">
+                <strong>Thông báo:</strong>
+                <p>Bạn có <span id="current-robux">9.968.888</span> RB chưa sử dụng.</p>
+            </div>
         </div>
 
-        <!-- Transaction History -->
-        <div class="history-section">
-            <h2>Lịch Sử Nạp Robux</h2>
-            <ul id="history-list"></ul>
+        <!-- Khung đăng ký nhận Robux miễn phí -->
+        <div class="robux-free">
+            <a href="https://example.com" target="_blank">Đăng ký nhận Robux miễn phí</a>
+        </div>
+
+        <div class="notification">
+            <strong>Lịch sử nạp tiền:</strong>
+            <ul>
+                <li>Nạp 1000 RB - 10/03/2025</li>
+                <li>Nạp 2000 RB - 12/03/2025</li>
+            </ul>
         </div>
     </div>
 
-    <script>
-        // Toggle Dark Mode
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-        });
+    <div class="container">
+        <h2>RÚT VẬT PHẨM (GAME)</h2>
+        <div class="tab">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Roblox_Logo_2022.jpg" alt="Roblox Logo">
+            <button class="active">Rút (Roblox)</button>
+        </div>
+        <p><strong>Hiện có:</strong> <span style="color: red; font-weight: bold;" id="current-robux-value">9.968.888 RB</span></p>
+        <form id="withdraw-form">
+            <label>Hình Thức Rút</label>
+            <select>
+                <option value="GAMEPASS">GAMEPASS</option>
+            </select>
+            <label>Số Robux *</label>
+            <input type="number" placeholder="0" required id="robux-input">
+            <label>Tên đăng nhập</label>
+            <input type="text" placeholder="Nhập Tên đăng nhập" required id="username-input">
+            <button type="submit" class="btn">RÚT NGAY</button>
+        </form>
+        <div class="message" id="success-message">Rút thành công!</div>
+        <div class="history">
+            <h3>Lịch Sử Lệnh Rút</h3>
+            <ul id="history-list"></ul>
+        </div>
+    </div>
+    <button onclick="toggleTheme()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background-color: #f39c12; color: white; border: none; border-radius: 5px;">Chuyển Đổi Theme</button>
 
-        // Load transaction history from localStorage
-        const historyList = document.getElementById('history-list');
-        
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('paymentHistory')) || [];
-            historyList.innerHTML = '';
-            history.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `${item.cardType} - ${item.cardAmount} VND - Mã thẻ: ${item.cardCode} - Seri thẻ: ${item.serialCode} - ${item.robuxAmount} RB - Bonus: ${item.bonus} RB - Trạng thái: ${item.status}`;
-                historyList.appendChild(li);
-            });
+    <script>
+        let currentRobux = 9968888; // Giá trị Robux hiện tại
+
+        // Hàm chuyển đổi theme giữa light và dark
+        function toggleTheme() {
+            const body = document.body;
+            const sidebar = document.querySelector('.sidebar');
+            const container = document.querySelector('.container');
+            const footerNote = document.querySelector('.footer-note');
+
+            // Kiểm tra và thay đổi theme
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                sidebar.classList.remove('dark');
+                container.classList.remove('dark');
+                footerNote.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark');
+                sidebar.classList.add('dark');
+                container.classList.add('dark');
+                footerNote.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
         }
 
-        loadHistory();
+        // Cập nhật giao diện theo theme đã lưu
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+                document.querySelector('.sidebar').classList.add('dark');
+                document.querySelector('.container').classList.add('dark');
+                document.querySelector('.footer-note').classList.add('dark');
+            }
+        };
 
-        // Handle payment form submission
-        const paymentForm = document.getElementById('payment-form');
-        const cardAmountInput = document.getElementById('card-amount');
-        const cardTypeInput = document.getElementById('card-type');
-        const cardCodeInput = document.getElementById('card-code');
-        const serialCodeInput = document.getElementById('serial-code');
-        const userTypeInput = document.getElementById('user-type');
-        const userInput = document.getElementById('user-input');
-        const calculatedRobux = document.getElementById('calculated-robux');
-        const errorMessage = document.getElementById('error-message');
-        const processingStatus = document.getElementById('processing-status');
+        // Hàm để định dạng số với dấu phân tách hàng nghìn
+        function formatNumber(number) {
+            return number.toLocaleString('vi-VN');
+        }
 
-        paymentForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+        // Xử lý sự kiện form submit
+        document.getElementById("withdraw-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Ngăn chặn form gửi đi
 
-            const cardAmount = parseInt(cardAmountInput.value);
-            const cardType = cardTypeInput.value;
-            const cardCode = cardCodeInput.value;
-            const serialCode = serialCodeInput.value;
-            const userType = userTypeInput.value;
-            const userValue = userInput.value;
+            // Lấy thông tin từ form
+            const robuxAmount = parseInt(document.querySelector('#robux-input').value);
+            const username = document.querySelector('#username-input').value;
 
-            // Validate card code and serial code
-            if (!/^\d+$/.test(cardCode) || !/^\d+$/.test(serialCode)) {
-                errorMessage.style.display = 'block';
+            // Kiểm tra số Robux nhập vào
+            if (robuxAmount <= 0 || robuxAmount > currentRobux) {
+                alert("Số Robux không hợp lệ.");
                 return;
             }
 
-            let robuxAmount = 0;
-            let bonus = 0;
+            // Cập nhật lại số Robux hiện có
+            currentRobux -= robuxAmount;
+            document.getElementById("current-robux-value").textContent = `${formatNumber(currentRobux)} RB`;
 
-            // Calculate Robux and bonus based on card amount
-            if (cardAmount === 20000) {
-                robuxAmount = 2000;
-            } else if (cardAmount === 50000) {
-                robuxAmount = 5000;
-                bonus = 1088; // Bonus for larger amounts
-            } else if (cardAmount === 100000) {
-                robuxAmount = 10000;
-                bonus = 2000;
-            } else if (cardAmount === 200000) {
-                robuxAmount = 20000;
-                bonus = 4000;
-            } else if (cardAmount === 500000) {
-                robuxAmount = 50000;
-                bonus = 10000;
-            }
+            // Hiển thị thông báo thành công
+            document.getElementById("success-message").style.display = "block";
+            setTimeout(function() {
+                document.getElementById("success-message").style.display = "none";
+            }, 3000);
 
-            // Update the UI with calculated results
-            calculatedRobux.textContent = `Số Robux nhận được: ${robuxAmount}`;
+            // Thêm lịch sử rút vào danh sách
+            const historyList = document.getElementById("history-list");
+            const newHistoryItem = document.createElement("li");
+            const currentTime = new Date().toLocaleString();
+            newHistoryItem.textContent = `Rút ${formatNumber(robuxAmount)} RB vào ${currentTime}`;
+            historyList.appendChild(newHistoryItem);
 
-            // Show processing message
-            processingStatus.style.display = 'block';
-
-            // Save transaction history
-            const now = new Date();
-            const time = now.toLocaleString('vi-VN');
-            const newTransaction = { 
-                cardType, cardAmount, cardCode, serialCode, 
-                robuxAmount, bonus, time, status: 'Đang xử lý' 
-            };
-            const history = JSON.parse(localStorage.getItem('paymentHistory')) || [];
-            history.unshift(newTransaction);
-            localStorage.setItem('paymentHistory', JSON.stringify(history));
-
-            loadHistory();
-
-            // Simulate sending request to admin (In a real app, it would be sent via an API)
-            setTimeout(() => {
-                // After sending to admin, we update status to "Đã duyệt nạp Robux"
-                newTransaction.status = 'Đã duyệt nạp Robux';
-                localStorage.setItem('paymentHistory', JSON.stringify(history));
-                loadHistory();
-                processingStatus.style.display = 'none'; // Hide processing status
-            }, 3000); // Simulate 3 seconds of processing time
-
-            // Reset the form
-            paymentForm.reset();
+            // Xóa dữ liệu trong form
+            document.querySelector('#robux-input').value = '';
+            document.querySelector('#username-input').value = '';
         });
-    </script>
 
+        // Cập nhật lại số Robux ban đầu
+        document.getElementById("current-robux").textContent = formatNumber(currentRobux);
+        document.getElementById("current-robux-value").textContent = `${formatNumber(currentRobux)} RB`;
+    </script>
 </body>
 </html>
