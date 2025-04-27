@@ -1,421 +1,344 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rút Vật Phẩm (Game)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        /* Định nghĩa các theme mặc định và dark mode */
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            flex-direction: column;
-            background: linear-gradient(135deg, #f4f4f4, #e2e2e2);
-            color: #333;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            position: relative; /* Để định vị logo bóng đèn */
-        }
-
-        body.dark {
-            background: linear-gradient(135deg, #333, #444);
-            color: #fff;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 300px;
-            height: 100%;
-            background-color: #292b2f;
-            color: white;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            overflow-y: auto;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .sidebar h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #f4f4f4;
-            font-weight: 600;
-        }
-
-        .sidebar .account-info, .sidebar .notification, .sidebar .robux-free {
-            width: 100%;
-            background-color: #343a40;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #444;
-            box-sizing: border-box;
-        }
-
-        .sidebar .robux-free a {
-            color: #ff6f61;
-            font-weight: bold;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .sidebar .robux-free a:hover {
-            color: #ff3b2d;
-        }
-
-        /* Main Content */
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            width: 500px;
-            margin-left: 320px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .tab {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .tab img {
-            width: 50px;
-            margin-right: 10px;
-        }
-
-        .tab button {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #e2e2e2;
-            color: #333;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .tab button:hover {
-            background-color: #f0a500;
-            color: white;
-        }
-
-        .tab button.active {
-            background-color: #ff6f61;
-            color: white;
-        }
-
-        /* Input & Button */
-        input, select, .btn {
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid #ccc;
-            transition: all 0.3s ease;
-            box-sizing: border-box; /* Thêm box-sizing */
-        }
-
-        input:focus, select:focus, .btn:hover {
-            border-color: #ff6f61;
-            outline: none;
-        }
-
-        .btn {
-            background-color: #ff6f61;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            box-sizing: border-box; /* Thêm box-sizing */
-        }
-
-        /* Form Group Style */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: bold; /* Tùy chọn: làm đậm label */
-        }
-
-        /* Dark Mode Button (Move to top right) */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #f0a500;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            color: white;
-            z-index: 10; /* Đảm bảo nút ở trên các phần khác */
-        }
-
-        /* History Section */
-        .history {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            width: 300px;
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 80vh;
-            overflow-y: auto;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #4CAF50;
-            color: white;
-            padding: 25px 45px;
-            border-radius: 8px;
-            font-size: 18px;
-            display: none;
-            z-index: 999;
-            min-width: 320px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .toast button {
-            background-color: transparent;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            margin-left: 15px;
-            text-decoration: underline;
-        }
-
-        /* Footer Note */
-        .footer-note {
-            width: 100%;
-            background-color: #fff;
-            color: #ff6f61;
-            padding: 20px;
-            text-align: center;
-            margin-top: 30px;
-            box-sizing: border-box;
-            font-size: 18px;
-            border: 2px solid #ff6f61;
-            border-radius: 10px;
-            margin-bottom: 80px; /* Để có khoảng trống cho logo bóng đèn */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Light Bulb Logo */
-        .dark-light-logo {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            font-size: 24px;
-            color: #f0a500; /* Màu vàng cam */
-            cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-            z-index: 10; /* Đảm bảo logo ở trên các phần khác */
-        }
-
-        .dark-light-logo:hover {
-            opacity: 1;
-        }
-
-        body.dark .dark-light-logo {
-            color: #fff; /* Màu trắng khi ở dark mode (tùy chỉnh) */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rút Vật Phẩm Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+        color: #333;
+        display: flex;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+        background: linear-gradient(135deg, #444, #555);
+        color: #eee;
+    }
+    .sidebar {
+        width: 280px;
+        background: #fff;
+        border-right: 1px solid #ddd;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+    body.dark .sidebar {
+        background: #666;
+        border-color: #888;
+    }
+    .sidebar h3 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 22px;
+    }
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+    .sidebar ul li {
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+        font-size: 15px;
+    }
+    .container {
+        flex: 1;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 18px;
+        background: #ff6f61;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+    .tab-group {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .tab-group button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        background: #e2e2e2;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.3s, color 0.3s;
+    }
+    .tab-group button.active {
+        background: #ff6f61;
+        color: white;
+    }
+    .form-section {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 420px;
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .form-section.active {
+        display: flex;
+    }
+    label {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+    input, select {
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    input:focus, select:focus {
+        border-color: #ff6f61;
+        outline: none;
+    }
+    .btn {
+        background: #ff6f61;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 17px;
+        padding: 14px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    .btn:hover {
+        background: #f04d3b;
+    }
+    .toast {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #4CAF50;
+        color: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        font-size: 17px;
+        display: none;
+        z-index: 1000;
+        text-align: center;
+    }
+    .loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 60px;
+        height: 60px;
+        margin: -30px 0 0 -30px;
+        border: 6px solid #ccc;
+        border-top: 6px solid #ff6f61;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 9999;
+        display: none;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .recent-transactions {
+        margin-top: 30px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .recent-transactions h3 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #ff6f61;
+    }
+    .recent-transactions ul {
+        list-style: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    .recent-transactions ul li {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 15px;
+    }
+</style>
 </head>
 <body>
 
-    <button id="theme-toggle" class="theme-toggle">Chuyển Đổi Chế Độ</button>
+<button id="theme-toggle" class="theme-toggle">Chế Độ Tối</button>
 
-    <div class="sidebar">
-        <h2>Thông Tin Tài Khoản</h2>
-        <div class="account-info">
-            <div class="info-item">
-                <strong>Tên tài khoản:</strong>
-                <p>AoCongTu68</p>
-            </div>
-            <div class="info-item">
-                <strong>Thông báo:</strong>
-                <p>Bạn có <span id="current-robux">9.968.888</span> RB chưa sử dụng.</p>
-            </div>
-        </div>
+<div class="sidebar">
+  <h3>Lịch Sử Lệnh Rút</h3>
+  <ul id="history-list"></ul>
+</div>
 
-        <div class="robux-free">
-            <a href="https://yeumoney.com/vK8eLK" target="_blank">Đăng ký nhận Robux miễn phí</a>
-        </div>
+<div class="container">
+  <h2>RÚT VẬT PHẨM GAME</h2>
 
-        <div class="notification">
-            <strong>Lịch sử nạp tiền:</strong>
-            <ul>
-                <li>Nạp 100000 USD - 10/03/2025</li>
-                <li>Nạp 7500 USB - 12/03/2025</li>
-            </ul>
-        </div>
-    </div>
+  <div class="tab-group">
+    <button id="tab-roblox" class="active">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Roblox_Logo_2022.jpg" alt="Roblox" width="25">
+      Roblox
+    </button>
+    <button id="tab-ff">
+      <img src="https://play-lh.googleusercontent.com/6llpraFcTI0rEUuRpWEG9NWWblvm106y5JXcDzu60ACuaUYDD3i70a-p9_QM65NsGDE=w240-h480-rw" alt="Free Fire" width="25">
+      Free Fire
+    </button>
+  </div>
 
-    <div class="container">
-        <h2>RÚT VẬT PHẨM (GAME)</h2>
-        <div class="tab">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Roblox_Logo_2022.jpg" alt="Roblox Logo">
-            <button class="active">Rút (Roblox)</button>
-        </div>
-        <p><strong>Hiện có:</strong> <span style="color: red; font-weight: bold;" id="current-robux-value">9.968.888 RB</span></p>
-        <form id="withdraw-form">
-            <div class="form-group">
-                <label for="withdraw-method">Hình Thức Rút</label>
-                <select id="withdraw-method">
-                    <option value="GAMEPASS">GAMEPASS</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="robux-input">Số Robux *</label>
-                <input type="number" placeholder="0" required id="robux-input">
-            </div>
-            <div class="form-group">
-                <label for="username-input">Tên đăng nhập</label>
-                <input type="text" placeholder="Nhập Tên đăng nhập" required id="username-input">
-            </div>
-            <button type="submit" class="btn">RÚT NGAY</button>
-        </form>
-    </div>
+  <div id="form-roblox" class="form-section active">
+    <p><strong>Hiện có:</strong> <span id="current-robux-value" style="color: red;">9.968.888 RB</span></p>
+    <form id="withdraw-form-roblox">
+      <label>Hình thức rút</label>
+      <select id="withdraw-method">
+        <option value="GAMEPASS">GAMEPASS</option>
+      </select>
+      <label>Số Robux *</label>
+      <input type="number" id="robux-input" placeholder="0" required>
+      <label>Tên đăng nhập Roblox *</label>
+      <input type="text" id="username-input" placeholder="Nhập tài khoản" required>
+      <button type="submit" class="btn">RÚT ROBUX</button>
+    </form>
+  </div>
 
-    <div class="history">
-        <h3>Lịch Sử Lệnh Rút</h3>
-        <ul id="history-list"></ul>
-    </div>
+  <div id="form-ff" class="form-section">
+    <p><strong>Hiện có:</strong> <span id="current-diamond-value" style="color: red;">50.000 KC</span></p>
+    <form id="withdraw-form-ff">
+      <label>ID Game Free Fire *</label>
+      <input type="text" id="ff-id" placeholder="Nhập ID Free Fire" required>
+      <label>Số Kim Cương *</label>
+      <input type="number" id="diamond-input" placeholder="0" required>
+      <button type="submit" class="btn">RÚT KIM CƯƠNG</button>
+    </form>
+  </div>
 
-    <div id="toast" class="toast">
-        Rút <span id="withdraw-amount"></span> RB thành công! <button onclick="closeToast()">OK</button>
-    </div>
+  <div class="recent-transactions">
+    <h3>Giao Dịch Gần Đây</h3>
+    <ul id="transaction-list"></ul>
+  </div>
 
-    <div class="dark-light-logo" id="dark-light-logo">
-        <i class="fas fa-lightbulb"></i>
-    </div>
+</div>
 
-    <div class="footer-note">
-        LƯU Ý ROBUX SẼ VỀ TRONG 3-7 NGÀY LÀM VIỆC!
-    </div>
+<div id="toast" class="toast">Thành Công!</div>
+<div id="loader" class="loader"></div>
 
-    <script>
-        let currentRobux = 9968888;
-        let historyList = [];
-        const body = document.body;
-        const themeToggle = document.getElementById("theme-toggle");
-        const darkLightLogo = document.getElementById("dark-light-logo");
+<script>
+let currentRobux = 9968888;
+let currentDiamond = 50000;
 
-        // Hàm chuyển đổi theme
-        function toggleTheme() {
-            body.classList.toggle("dark");
-            // Lưu trạng thái theme vào localStorage (tùy chọn)
-            localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
-        }
+document.getElementById('theme-toggle').onclick = function() {
+  document.body.classList.toggle('dark');
+};
 
-        // Kiểm tra theme đã lưu khi tải trang (tùy chọn)
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            body.classList.add('dark');
-        }
+document.getElementById('tab-roblox').onclick = () => {
+  setTab('roblox');
+};
+document.getElementById('tab-ff').onclick = () => {
+  setTab('ff');
+};
 
-        themeToggle.addEventListener("click", toggleTheme);
-        darkLightLogo.addEventListener("click", toggleTheme);
+function setTab(tab) {
+  document.getElementById('tab-roblox').classList.toggle('active', tab === 'roblox');
+  document.getElementById('tab-ff').classList.toggle('active', tab === 'ff');
+  document.getElementById('form-roblox').classList.toggle('active', tab === 'roblox');
+  document.getElementById('form-ff').classList.toggle('active', tab === 'ff');
+}
 
-        // Hàm rút Robux và cập nhật giao diện
-        document.getElementById("withdraw-form").addEventListener("submit", function(e) {
-            e.preventDefault();
+document.getElementById('withdraw-form-roblox').onsubmit = function(e) {
+  e.preventDefault();
+  const robux = parseInt(document.getElementById('robux-input').value);
+  const username = document.getElementById('username-input').value;
+  if (!robux || robux <= 0 || robux > currentRobux) return alert('Số Robux không hợp lệ.');
+  currentRobux -= robux;
+  document.getElementById('current-robux-value').innerText = currentRobux.toLocaleString() + ' RB';
+  addHistory(`Rút ${robux.toLocaleString()} RB cho tài khoản ${username}`);
+  showToast(`Rút ${robux} Robux thành công!`);
+  this.reset();
+};
 
-            const robuxInput = document.getElementById("robux-input");
-            const robuxAmount = parseInt(robuxInput.value);
-            const username = document.getElementById("username-input").value;
+document.getElementById('withdraw-form-ff').onsubmit = function(e) {
+  e.preventDefault();
+  const diamonds = parseInt(document.getElementById('diamond-input').value);
+  const ffId = document.getElementById('ff-id').value;
+  if (!diamonds || diamonds <= 0 || diamonds > currentDiamond) return alert('Số Kim Cương không hợp lệ.');
+  currentDiamond -= diamonds;
+  document.getElementById('current-diamond-value').innerText = currentDiamond.toLocaleString() + ' KC';
+  addHistory(`Rút ${diamonds.toLocaleString()} KC cho ID ${ffId}`);
+  showToast(`Rút ${diamonds} KC thành công!`);
+  this.reset();
+};
 
-            if (isNaN(robuxAmount) || robuxAmount <= 0 || robuxAmount > currentRobux) {
-                alert("Số Robux nhập không hợp lệ.");
-                return;
-            }
+function addHistory(content) {
+  const li = document.createElement('li');
+  li.innerText = content + ' - ' + new Date().toLocaleString();
+  document.getElementById('history-list').prepend(li);
+}
 
-            // Cập nhật lại số lượng Robux còn lại
-            currentRobux -= robuxAmount;
-            document.getElementById("current-robux-value").textContent = currentRobux.toLocaleString() + " RB";
+function showToast(message) {
+  const loader = document.getElementById('loader');
+  const toast = document.getElementById('toast');
+  
+  loader.style.display = 'block';
+  setTimeout(() => {
+    loader.style.display = 'none';
+    toast.textContent = message;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+  }, 1500);
+}
 
-            // Thêm vào lịch sử
-            const now = new Date().toLocaleString();
-            historyList.unshift(`Rút ${robuxAmount.toLocaleString()} RB vào tài khoản ${username} vào ${now}`);
-            updateHistory();
+// Fake giao dịch gần đây
+const fakeNames = ["AoCongTu68", "MinhGamer", "LinhCute", "KenRoblox", "FF_ProPlayer", "ThanhSang", "BaoNgoc", "AnhTu", "HoaMy"];
+const fakeItems = ["Robux", "Kim Cương"];
 
-            // Hiển thị thông báo rút thành công
-            showToast(`Rút ${robuxAmount.toLocaleString()} RB thành công!`);
+function randomTransaction() {
+    const name = fakeNames[Math.floor(Math.random() * fakeNames.length)];
+    const item = fakeItems[Math.floor(Math.random() * fakeItems.length)];
+    const amount = Math.floor(Math.random() * 1900) + 100;
+    const list = document.getElementById('transaction-list');
 
-            // Xóa input sau khi rút
-            robuxInput.value = "";
-        });
+    const li = document.createElement('li');
+    li.textContent = `• ${name} vừa rút ${amount.toLocaleString()} ${item} thành công`;
+    list.prepend(li);
 
-        // Hàm cập nhật lịch sử lệnh rút
-        function updateHistory() {
-            const historyListElement = document.getElementById("history-list");
-            historyListElement.innerHTML = '';
-            historyList.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item;
-                historyListElement.appendChild(li);
-            });
-        }
+    if (list.children.length > 10) {
+        list.removeChild(list.lastChild);
+    }
+}
 
-        // Hiển thị thông báo rút thành công
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-            const withdrawAmount = document.getElementById("withdraw-amount");
-            withdrawAmount.textContent = message;
-            toast.style.display = 'block';
+setInterval(randomTransaction, Math.floor(Math.random() * 2000) + 3000);
+</script>
 
-            // Ẩn thông báo sau 3 giây
-            setTimeout(function() {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-
-        // Đóng thông báo
-        function closeToast() {
-            document.getElementById("toast").style.display = 'none';
-        }
-    </script>
 </body>
 </html>
